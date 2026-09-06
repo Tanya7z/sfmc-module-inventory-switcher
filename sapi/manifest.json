@@ -11,7 +11,6 @@
     "config:read:inventory_switcher",
     "db:read:sfmc_inventories",
     "db:write:sfmc_inventories",
-    "command:inv",
     "service:inventory.save",
     "service:inventory.restore",
     "service:inventory.switch",
@@ -22,28 +21,48 @@
     "provides": [
       {
         "name": "inventory.save",
-        "input": { "type": "object" },
-        "output": { "type": "object" }
+        "input": {
+          "type": "object"
+        },
+        "output": {
+          "type": "object"
+        }
       },
       {
         "name": "inventory.restore",
-        "input": { "type": "object" },
-        "output": { "type": "object" }
+        "input": {
+          "type": "object"
+        },
+        "output": {
+          "type": "object"
+        }
       },
       {
         "name": "inventory.switch",
-        "input": { "type": "object" },
-        "output": { "type": "object" }
+        "input": {
+          "type": "object"
+        },
+        "output": {
+          "type": "object"
+        }
       },
       {
         "name": "inventory.clear",
-        "input": { "type": "object" },
-        "output": { "type": "object" }
+        "input": {
+          "type": "object"
+        },
+        "output": {
+          "type": "object"
+        }
       },
       {
         "name": "inventory.has",
-        "input": { "type": "object" },
-        "output": { "type": "object" }
+        "input": {
+          "type": "object"
+        },
+        "output": {
+          "type": "object"
+        }
       }
     ],
     "requires": []

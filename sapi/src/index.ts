@@ -70,14 +70,19 @@ async function loadSnapshot(
   }
 }
 
-async function deleteSnapshot(playerId: string, slotKey: string): Promise<void> {
+async function deleteSnapshot(
+  playerId: string,
+  slotKey: string,
+): Promise<void> {
   const id = rowId(playerId, slotKey);
   await db.tx(async (tx) => {
     await tx.delete(TABLE, id);
   });
 }
 
-async function handleSave(input: Record<string, unknown>): Promise<{ ok: boolean }> {
+async function handleSave(
+  input: Record<string, unknown>,
+): Promise<{ ok: boolean }> {
   const playerId = String(input.playerId ?? "");
   const slotKey = String(input.slotKey ?? DEFAULT_SLOT) || DEFAULT_SLOT;
   const clearCurrent = Boolean(input.clearCurrent);
@@ -96,7 +101,9 @@ async function handleSave(input: Record<string, unknown>): Promise<{ ok: boolean
   return { ok: true };
 }
 
-async function handleRestore(input: Record<string, unknown>): Promise<{ ok: boolean }> {
+async function handleRestore(
+  input: Record<string, unknown>,
+): Promise<{ ok: boolean }> {
   const playerId = String(input.playerId ?? "");
   const slotKey = String(input.slotKey ?? DEFAULT_SLOT) || DEFAULT_SLOT;
   const clearAfter = Boolean(input.clearAfter);
@@ -109,7 +116,9 @@ async function handleRestore(input: Record<string, unknown>): Promise<{ ok: bool
   return { ok: true };
 }
 
-async function handleSwitch(input: Record<string, unknown>): Promise<{ ok: boolean }> {
+async function handleSwitch(
+  input: Record<string, unknown>,
+): Promise<{ ok: boolean }> {
   const playerId = String(input.playerId ?? "");
   const fromSlotKey = String(input.fromSlotKey ?? "");
   const toSlotKey = String(input.toSlotKey ?? "");
@@ -125,7 +134,9 @@ async function handleSwitch(input: Record<string, unknown>): Promise<{ ok: boole
   return { ok: true };
 }
 
-async function handleClear(input: Record<string, unknown>): Promise<{ ok: boolean }> {
+async function handleClear(
+  input: Record<string, unknown>,
+): Promise<{ ok: boolean }> {
   const playerId = String(input.playerId ?? "");
   const backupSlotKey =
     typeof input.backupSlotKey === "string" ? input.backupSlotKey : undefined;
@@ -149,30 +160,33 @@ async function handleHas(
   return { exists: !!snap };
 }
 
+function registerCommands(): void {
+  Command.register(
+    "inv",
+    "inv.admin",
+    (player) => {
+      if (!player) {
+        debug.i("INV", "用法: inv restore（需配合运维面板；当前打开提示）");
+        return;
+      }
+      Msg.tips(
+        "管理指令：通过 service inventory.restore 或运维脚本恢复。玩家面无普通命令。",
+        player,
+      );
+    },
+    "背包管理（灾备）",
+    MODULE_ID,
+  );
+}
+
+registerCommands();
+
 ModuleRegistry.register({
   id: MODULE_ID,
   afterWorldLoad: true,
   lifecycle: {
     registerPermissions() {
       Permission.register("inv.admin", Permission.Admin);
-    },
-    registerCommands() {
-      Command.register(
-        "inv",
-        "inv.admin",
-        (player) => {
-          if (!player) {
-            debug.i("INV", "用法: inv restore（需配合运维面板；当前打开提示）");
-            return;
-          }
-          Msg.tips(
-            "管理指令：通过 service inventory.restore 或运维脚本恢复。玩家面无普通命令。",
-            player,
-          );
-        },
-        "背包管理（灾备）",
-        MODULE_ID,
-      );
     },
     registerEvents() {
       // 纯被动服务：不监听模式切换
@@ -191,11 +205,21 @@ ModuleRegistry.register({
         updated_at: { type: "INTEGER", notNull: true, default: 0 },
       });
 
-      unprovide.push(service.provide("inventory.save", (input) => handleSave(input)));
-      unprovide.push(service.provide("inventory.restore", (input) => handleRestore(input)));
-      unprovide.push(service.provide("inventory.switch", (input) => handleSwitch(input)));
-      unprovide.push(service.provide("inventory.clear", (input) => handleClear(input)));
-      unprovide.push(service.provide("inventory.has", (input) => handleHas(input)));
+      unprovide.push(
+        service.provide("inventory.save", (input) => handleSave(input)),
+      );
+      unprovide.push(
+        service.provide("inventory.restore", (input) => handleRestore(input)),
+      );
+      unprovide.push(
+        service.provide("inventory.switch", (input) => handleSwitch(input)),
+      );
+      unprovide.push(
+        service.provide("inventory.clear", (input) => handleClear(input)),
+      );
+      unprovide.push(
+        service.provide("inventory.has", (input) => handleHas(input)),
+      );
 
       debug.i("INV", `init maxSlots=${maxSlots} saveXp=${saveXp}`);
     },

@@ -6,7 +6,7 @@ import { Player, world } from "@minecraft/server";
 import { config } from "@sfmc-bds/sdk/sapi/config";
 import { db } from "@sfmc-bds/sdk/sapi/db";
 import { ModuleRegistry } from "@sfmc-bds/sdk/module-loader";
-import { Command, debug, Msg, Permission } from "@sfmc-bds/sdk/sapi/runtime";
+import { debug, Permission } from "@sfmc-bds/sdk/sapi/runtime";
 import { service } from "@sfmc-bds/sdk/sapi/service";
 import { rowId } from "./ids.js";
 import {
@@ -159,27 +159,6 @@ async function handleHas(
   const snap = await loadSnapshot(playerId, slotKey);
   return { exists: !!snap };
 }
-
-function registerCommands(): void {
-  Command.register(
-    "inv",
-    "inv.admin",
-    (player) => {
-      if (!player) {
-        debug.i("INV", "用法: inv restore（需配合运维面板；当前打开提示）");
-        return;
-      }
-      Msg.tips(
-        "管理指令：通过 service inventory.restore 或运维脚本恢复。玩家面无普通命令。",
-        player,
-      );
-    },
-    "背包管理（灾备）",
-    MODULE_ID,
-  );
-}
-
-registerCommands();
 
 ModuleRegistry.register({
   id: MODULE_ID,

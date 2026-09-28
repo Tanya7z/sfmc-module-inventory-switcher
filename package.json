@@ -1,6 +1,6 @@
 {
   "name": "@sfmc-bds/module-inventory-switcher",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "packageManager": "pnpm@10.8.0",
   "type": "module",
   "description": "SAPI module: 背包快照与切换",
@@ -51,4 +51,3 @@
     "node": ">=22.13.0"
   }
 }
-
